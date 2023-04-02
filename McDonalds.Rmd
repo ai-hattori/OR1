@@ -37,5 +37,24 @@ df <- no_brekky_snack_bev
 df$Item <- gsub("\\(Medium\\)", "", df$Item)
 
 df <- left_join(df, price, by = "Item")
+
+df %>%
+  filter(is.na(Price))
+
+df <- df %>%
+  mutate (Price = case_when(
+    Item == "McFlurry with Reese's Peanut Butter Cups" ~ "$4.29",
+    Item == "McFlurry with Oreo Cookies" ~ "$4.29",
+    Item == "McFlurry with M&M’s Candies" ~ "$4.29",
+    Item == "Shamrock Shake" ~ "$3.69",
+    Item == "Chocolate Shake" ~ "$3.69",
+    Item == "Strawberry Shake" ~ "$3.69",
+    Item == "	Vanilla Shake" ~ "$3.69",
+    TRUE                                               ~ Price
+    )
+  )
+
+
+#df %>% select(Item,Price)
 ```
 
