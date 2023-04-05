@@ -68,11 +68,49 @@ df <- df[complete.cases(df$Price),]
 #drop apple juice
 df <- df[-43,]
 
+df <- df %>%
+  mutate(Drink = NA) 
+
+# put 1 for drinks, 0 for the rest
+df$Drink[36:85] <- 1
+df$Drink[1:35] <- 0
+
+# convert the unit for calcium from %DV to mg
+df$Calcium <- df$Calcium....Daily.Value.*(1300/100)
+df$Iron <- df$Iron....Daily.Value.*(18/100)
 ```
 
 ```{r}
 #export
 write.csv(df, "Data/menu_prices.csv", row.names=FALSE)
+```
+
+```{r}
+o=as.list(as.numeric((df$Price))) #define objective function
+c=matrix(c(df$Calories,
+            df$Carbohydrates,
+            df$Protein,
+            df$Dietary.Fiber,
+            df$Sodium,
+            df$Iron,
+            df$Total.Fat....Daily.Value.,
+            df$Saturated.Fat....Daily.Value.,
+            df$Calcium,
+            df$Cholesterol,
+            df$Drink),
+           ncol = 85, 
+           byrow=T)
+
+d = c("<=", ">=", ">=", ">=", "<=", ">=", "<=","<=", "<=","<=",">=") #constraints
+
+r = c(2000/3, 130/3, 46/3, 28/3, 2300/3, 18/3, 35/3,10/3,1300/3,100, 1) # RHS of constraints
+
+sol = lpSolve::lp("min",o,c,d,r,compute.sens=T)
+
+sol$solution
+
+           
+df[6,]
 ```
 
 
