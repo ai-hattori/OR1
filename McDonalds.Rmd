@@ -109,8 +109,9 @@ sol = lpSolve::lp("min",o,c,d,r,compute.sens=T)
 
 sol$solution
 
+index <- which(sol$solution != 0)
            
-df[6,]
+df[index,]
 ```
 
 
