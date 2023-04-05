@@ -108,6 +108,12 @@ r = c(2000/3, 130/3, 46/3, 28/3, 2300/3, 18/3, 35/3,10/3,1300/3,100, 1) # RHS of
 sol = lpSolve::lp("min",o,c,d,r,compute.sens=T) #find the optimal solution 
 sol$solution
 
+index <- which(sol$solution != 0)
+
+coeffs <- data.frame(sol$solution[index])
+
+coeffs <- coeffs %>%
+  mutate(items = df$Item[index])
 ```
 
 
