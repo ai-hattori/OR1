@@ -86,7 +86,7 @@ write.csv(df, "Data/menu_prices.csv", row.names=FALSE)
 ```
 
 ```{r}
-o=as.list(as.numeric((df$Price))) #define objective function
+o=as.list(as.numeric((df$Price))) # define objective function for Price
 c=matrix(c(df$Calories,
             df$Carbohydrates,
             df$Protein,
@@ -99,19 +99,18 @@ c=matrix(c(df$Calories,
             df$Cholesterol,
             df$Drink),
            ncol = 85, 
-           byrow=T)
+           byrow=T) # matrix of coefficients for constraints
 
 d = c("<=", ">=", ">=", ">=", "<=", ">=", "<=","<=", "<=","<=",">=") #constraints
 
 r = c(2000/3, 130/3, 46/3, 28/3, 2300/3, 18/3, 35/3,10/3,1300/3,100, 1) # RHS of constraints
 
-sol = lpSolve::lp("min",o,c,d,r,compute.sens=T)
-
+sol = lpSolve::lp("min",o,c,d,r,compute.sens=T) #find the optimal solution 
 sol$solution
 
-index <- which(sol$solution != 0)
+index <- which(sol$solution != 0) #find indices of basic variables in the optimal solution
            
-df[index,]
+df[index,] #find entries for basic variables in the original data frame, df
 ```
 
 
