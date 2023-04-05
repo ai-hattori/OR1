@@ -70,3 +70,9 @@ df <- df[-43,]
 
 ```
 
+```{r}
+#export
+write.csv(df, "Data/menu_prices.csv", row.names=FALSE)
+```
+
+
