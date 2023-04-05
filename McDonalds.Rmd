@@ -110,8 +110,11 @@ sol = lpSolve::lp("min",o,c,d,r,compute.sens=T)
 sol$solution
 
 index <- which(sol$solution != 0)
-           
-df[index,]
+
+coeffs <- data.frame(sol$solution[index])
+
+coeffs <- coeffs %>%
+  mutate(items = df$Item[index])
 ```
 
 
