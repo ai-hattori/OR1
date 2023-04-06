@@ -10,6 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r, include = FALSE, warning=FALSE}
+#install.packages("leaflet")
 library(leaflet)
 library(tidyverse)
 library(readxl)
@@ -116,4 +117,54 @@ coeffs <- coeffs %>%
   mutate(items = df$Item[index])
 ```
 
+```{r}
+#load in data
+mc_co2 <- read.csv("Data/Menu CO2.csv")
 
+df <- df %>%
+  mutate(Drink = NA) 
+
+# put 1 for drinks, 0 for the rest
+df$Drink[36:85] <- 1
+df$Drink[1:35] <- 0
+
+# convert the unit for calcium from %DV to mg
+df$Calcium <- df$Calcium....Daily.Value.*(1300/100)
+df$Iron <- df$Iron....Daily.Value.*(18/100)
+```
+
+```{r}
+o=as.list(as.numeric((df$Total CO))) # define objective function for Price
+c=matrix(c(df$Calories,
+            df$Carbohydrates,
+            df$Protein,
+            df$Dietary.Fiber,
+            df$Sodium,
+            df$Iron,
+            df$Total.Fat....Daily.Value.,
+            df$Saturated.Fat....Daily.Value.,
+            df$Calcium,
+            df$Cholesterol,
+            df$Drink),
+           ncol = 85, 
+           byrow=T) # matrix of coefficients for constraints
+
+d = c("<=", ">=", ">=", ">=", "<=", ">=", "<=","<=", "<=","<=",">=") #constraints
+
+r = c(2000/3, 130/3, 46/3, 28/3, 2300/3, 18/3, 35/3,10/3,1300/3,100, 1) # RHS of constraints
+
+sol = lpSolve::lp("min",o,c,d,r,compute.sens=T) #find the optimal solution 
+sol$solution
+
+index <- which(sol$solution != 0)
+
+coeffs <- data.frame(sol$solution[index])
+
+coeffs <- coeffs %>%
+  mutate(items = df$Item[index])
+```
+
+```{r}
+#load in data
+mc <- read.csv("Data/menu.csv")
+```
