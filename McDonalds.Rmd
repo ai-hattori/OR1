@@ -119,7 +119,8 @@ coeffs <- coeffs %>%
 
 ```{r}
 #load in data
-mc_co2 <- read.csv("Data/Menu CO2.csv")
+df <- read.csv("Data/Menu CO2.csv")
+
 
 df <- df %>%
   mutate(Drink = NA) 
@@ -134,7 +135,7 @@ df$Iron <- df$Iron....Daily.Value.*(18/100)
 ```
 
 ```{r}
-o=as.list(as.numeric((df$Total CO))) # define objective function for Price
+o2=as.list(as.numeric((df$Total.CO2))) # define objective function for total CO2
 c=matrix(c(df$Calories,
             df$Carbohydrates,
             df$Protein,
@@ -153,18 +154,48 @@ d = c("<=", ">=", ">=", ">=", "<=", ">=", "<=","<=", "<=","<=",">=") #constraint
 
 r = c(2000/3, 130/3, 46/3, 28/3, 2300/3, 18/3, 35/3,10/3,1300/3,100, 1) # RHS of constraints
 
-sol = lpSolve::lp("min",o,c,d,r,compute.sens=T) #find the optimal solution 
-sol$solution
+sol2 = lpSolve::lp("min",o2,c,d,r,compute.sens=T) #find the optimal solution 
+sol2$solution
 
-index <- which(sol$solution != 0)
+index2 <- which(sol2$solution != 0)
 
-coeffs <- data.frame(sol$solution[index])
+coeffs2 <- data.frame(sol2$solution[index2])
 
-coeffs <- coeffs %>%
-  mutate(items = df$Item[index])
+coeffs2 <- coeffs2 %>%
+  mutate(items2 = df$Item[index2])
 ```
 
 ```{r}
-#load in data
-mc <- read.csv("Data/menu.csv")
+o3=as.list(as.numeric((df$CO2.g))) # define objective function for  CO2(g)
+
+df[7,3] <-  1105
+
+c=matrix(c(df$Calories,
+            df$Carbohydrates,
+            df$Protein,
+            df$Dietary.Fiber,
+            df$Sodium,
+            df$Iron,
+            df$Total.Fat....Daily.Value.,
+            df$Saturated.Fat....Daily.Value.,
+            df$Calcium,
+            df$Cholesterol,
+            df$Drink),
+           ncol = 85, 
+           byrow=T) # matrix of coefficients for constraints
+
+d = c("<=", ">=", ">=", ">=", "<=", ">=", "<=","<=", "<=","<=",">=") #constraints
+
+r = c(2000/3, 130/3, 46/3, 28/3, 2300/3, 18/3, 35/3,10/3,1300/3,100, 1) # RHS of constraints
+
+sol3 = lpSolve::lp("min",o3,c,d,r,compute.sens=T) #find the optimal solution 
+sol3$solution
+
+index3 <- which(sol3$solution != 0)
+
+coeffs3 <- data.frame(sol3$solution[index3])
+
+coeffs3 <- coeffs3 %>%
+  mutate(items3 = df$Item[index3])
 ```
+
